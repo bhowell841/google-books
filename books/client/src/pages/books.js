@@ -1,11 +1,5 @@
 import React, { Component } from "react";
-import Jumbotron from "../components/Jumbotron";
-import API from "../utils/API";
-import DeleteBtn from "../components/DeleteBtn";
-import { Col, Row, Container } from "../components/Grid";
-import { List, ListItem } from "../components/List";
-import { Input, TextArea, FormBtn } from "../components/Form";
-import { Link } from "react-router-dom";
+import axios from "axios";
 
 class Books extends Component {
     state = {
@@ -16,94 +10,47 @@ class Books extends Component {
     };
   
     componentDidMount() {
-        this.loadBooks();
+        // this.loadBooks();
       }
 
-    loadBooks = () => {
-        API.getBooks()
-          .then(res =>
-            this.setState({ books: res.data.books, title: "", author: "", synopsis: "" })
-          )
-          .catch(err => console.log(err));
-      };
+    handleSearchTitle = (event) => {
+      // console.log(event.target.value)
+      this.setState({ title: event.target.value })
+    }
 
-    deleteBook = id => {
-        API.deleteBook(id)
-          .then(res => this.loadBooks())
-          .catch(err => console.log(err));
-      };
+    handleSubmit = () => {
+      console.log("You got clicked")
+      axios.request({
+        method: 'get',
+        url: 'https://www.googleapis.com/books/v1/volumes?q=' + this.state.title
+      }).then((response) => {
+        this.setState({ books: response.data.items}, () => {
+          console.log("State: " + this.state);
+        })
+      }).catch((error) => {
+        console.log(error)
+      });
+    }
 
-    handleInputChange = event => {
-        const { name, value } = event.target;
-        this.setState({
-          [name]: value
-        });
-      };
 
-    handleFormSubmit = event => {
-        event.preventDefault();
-        if (this.state.title) {
-          API.search({
-            book: this.state.book,
-            // title: this.state.title,
-            // author: this.state.author,
-            // synopsis: this.state.synopsis
-          })
-            .then(res => this.loadBooks())
-            .catch(err => console.log(err));
-        }
-      };
+    //   https://www.googleapis.com/books/v1/volumes?q=flowers+inauthor:keyes&key=AIzaSyC24lKC4eaSu80H280a3KevNjSjo_eu5Ao
+    
+    
+    
+      
 
-    renderBooks = () => {
-        if (this.state.books.length <= 0) {
-          return (
-            <List>
-              {this.state.books.map(book => (
-                <ListItem key={book._id}>
-                  <Link to={"/books/" + book._id}>
-                    <strong>
-                      {book.title} by {book.author}
-                    </strong>
-                  </Link>
-                  <DeleteBtn onClick={() => this.deleteBook(book._id)} />
-                </ListItem>
-              ))}
-            </List>
-          )
-        } else return <h3>No Results to Display</h3> 
-      }
+    
 
       render() {
+        console.log(this.state)
         return (
-          <Container fluid>
-            <Row>
-              <Col size="md-6">
-                <Jumbotron>
-                  <h1>Book Search</h1>
-                </Jumbotron>
-                <form>
-                  <Input
-                    value={this.state.title}
-                    onChange={this.handleInputChange}
-                    name="title"
-                    placeholder="Title (required)"
-                  />
-                  <FormBtn
-                    disabled={!(this.state.title)}
-                    onClick={this.handleFormSubmit}
-                  >
-                    Submit Book
-                  </FormBtn>
-                </form>
-              </Col>
-              <Col size="md-6 sm-12">
-                <Jumbotron>
-                  <h1>Results</h1>
-                </Jumbotron>
-                {this.renderBooks}
-              </Col>
-            </Row>
-          </Container>
+          <div>
+                <h1>Search A Book</h1>
+                <h1>{ this.state.title }</h1>
+                <input onChange={ this.handleSearchTitle }></input>
+                <button onClick={ this.handleSubmit }>Search</button>
+                
+          </div>
         );
       }
     }
