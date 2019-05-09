@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 
+
 class Books extends Component {
     state = {
       books: [],
@@ -10,7 +11,7 @@ class Books extends Component {
     };
   
     componentDidMount() {
-        // this.loadBooks();
+        
       }
 
     handleSearchTitle = (event) => {
@@ -33,13 +34,12 @@ class Books extends Component {
     }
 
 
-    //   https://www.googleapis.com/books/v1/volumes?q=flowers+inauthor:keyes&key=AIzaSyC24lKC4eaSu80H280a3KevNjSjo_eu5Ao
-    
-    
-    
-      
-
-    
+      //  Next i would save my results into the books array in state
+      // Then render them and the pertinent info to the the DOM, along with a save button for each result
+      // Clicking the save button would send a call to the DB saving each book in the DB
+      // The saved page would render all the books saved to the database to the DOM along with a remove button
+      // Remove button would clear the books from the DB.
+  
 
       render() {
         console.log(this.state)
